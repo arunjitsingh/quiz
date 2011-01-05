@@ -3,19 +3,126 @@
   <head>
     <title>Quiz</title>
   </head>
+  <style>
+  
+body {
+  position:absolute;
+  width: 960px; left: 50%; margin-left: -480px;
+  top:0px;bottom:0px;height:auto;
+  background-color: #CCC;
+}
+h1 {
+  font: 48px "Vladimir";
+  text-align: center;
+  text-shadow: 0 1px 0 white;
+}
+button {
+  background-color: #0AF;
+  background-image: -webkit-gradient(linear, left bottom, left top,
+                                   from(transparent),
+                                   color-stop(0.45, rgba(0,0,0,0.05)),
+                                   color-stop(0.50, rgba(255,255,255,0.05)),
+                                   color-stop(0.55, rgba(255,255,255,0.15)),
+                                   to(rgba(255,255,255,0.25)));
+  color: white;
+  padding: 0.5em 1em;
+  border-radius: 1em;
+  cursor: pointer;
+  font: 12px "Verdana" bold;
+}
+button:hover {
+  background-color: #0CF;
+}
+button:active {
+  background-color: #09C;
+}
+nav {
+  display: block;
+  text-align: center;
+  padding: 1em;
+}
+nav input {
+  border-radius: 1em;
+  padding: 0.5em 1em;
+  text-align: right;
+}
+button, input {
+  border: none;
+  font-size:inherit;
+  -webkit-box-shadow:0 1px 0px white, 0 -1px 0px black;
+}
+button:focus, input:focus {
+  outline:none !important;
+  -webkit-box-shadow:0 0 15px #0FF;
+  border-color: blue;
+}
+#qbox {
+  font-size:inherit;
+  font-family: sans-serif;
+  text-align:center;
+}
+#question {
+  display: block;
+  padding: 25px;
+  text-align: justify;
+  height: 150px;
+  overflow-x: hidden;
+}
+#question, #answer {
+  font-size: 36px;
+  font-weight: bold;
+  text-shadow: 0 1px 0 white;
+}
+#answer {
+  color: #000;
+}
+#ans {
+  display: block;
+}
+#category, #qid {
+  font: 16px monospace bold;
+  color: #AAA;
+}
+footer {
+  display: block;
+  text-align: center;
+  font: 10px "Courier";
+  position: absolute; bottom: 0px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  -webkit-border-radius: 5px;
+  
+}
+::-webkit-scrollbar-thumb:vertical {
+  background-color: rgba(140,140,140,0.55);
+  background-image: -webkit-gradient(linear, left top, right top,
+                                   from(transparent),
+                                   color-stop(0.35, transparent),
+                                   color-stop(0.50, rgba(255,255,255,0.1)),
+                                   to(rgba(255,255,255,0.2)));
+  -webkit-border-radius: 5px;
+}
+  </style>
   <body>
 
     <h1>Quiz</h1>
     <nav>
       <button id="previous">&larr;Previous</button>
       <button id="next">Next&rarr;</button>
-      <input id="jumpq"/><button id="gotoq">Jump to Question</button>
+      <input id="jumpq" placeholder="Question number"><button id="gotoq">Jump to Question</button>
     </nav>
     <div id="qbox">
-      <span id="qid"></span>)&nbsp;
-      <span id="question"></span><BR>
-      <button id="showans">Show Answer</button><span id="answer"></span><BR>
-      <span id="category"></span>
+      <span id="qid"></span>&nbsp;&nbsp;<span id="category"></span><BR>
+      <hr id="spacer">
+      <span id="question"></span>
+      <hr id="spacer">
+      <div id="ans">
+        <button id="showans">Show Answer</button>
+        <span id="answer"></span><BR>
+      </div>
+      
     </div>
     <span id="status"></span>
     <footer style="position:absolute;bottom:0px">Powered by CouchDB!</footer>
@@ -28,6 +135,7 @@
           
       var showCurrent = function() {
         $("#answer").hide();
+        $("#showans").show();
         $.getJSON('/quiz/'+currentq, function(data) {
           $("#qid").text(data._id);
           $("#question").text(data.question);
@@ -56,6 +164,7 @@
       });
       
       $("#showans").click(function() {
+        $("#showans").hide();
         $("#answer").show();
       });
       
