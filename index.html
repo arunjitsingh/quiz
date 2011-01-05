@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Quiz</title>
+  </head>
+  <body>
+
+    <h1>Quiz</h1>
+    <nav>
+      <button id="previous">&larr;Previous</button>
+      <button id="next">Next&rarr;</button>
+      <input id="jumpq"/><button id="gotoq">Jump to Question</button>
+    </nav>
+    <div id="qbox">
+      <span id="qid"></span>)&nbsp;
+      <span id="question"></span><BR>
+      <button id="showans">Show Answer</button><span id="answer"></span><BR>
+      <span id="category"></span>
+    </div>
+    <span id="status"></span>
+    <footer style="position:absolute;bottom:0px">Powered by CouchDB!</footer>
+  </body>
+  <script src="jquery.js"></script>
+  <script type="text/javascript" charset="utf-8">
+    $(document).ready(function() {
+      var maxq = 0,
+          currentq = 0;
+          
+      var showCurrent = function() {
+        $("#answer").hide();
+        $.getJSON('/quiz/'+currentq, function(data) {
+          $("#qid").text(data._id);
+          $("#question").text(data.question);
+          $("#answer").text(data.answer);
+          $("#category").text(data.category);
+        });
+      };
+      $.ajax({
+        url: '/quiz/',
+        dataType: 'json',
+        success: function(data) {
+          maxq = data.doc_count - 1; // -1 for design documents
+          currentq = 1;
+          showCurrent();
+        }
+      });
+      
+      $("#previous").click(function() {
+        currentq = (currentq-1) || 1;
+        showCurrent();
+      });
+      
+      $("#next").click(function() {
+        currentq = currentq === maxq ? maxq : currentq+1;
+        showCurrent();
+      });
+      
+      $("#showans").click(function() {
+        $("#answer").show();
+      });
+      
+      $("#gotoq").click(function() {
+        var val = $("#jumpq").val();
+        if (val && val !== '') {
+          try {
+            currentq = parseInt(val, 10);
+            if(currentq > maxq) {
+              alert("Maximum " + maxq + " questions available.");
+              return;
+            }
+            showCurrent();
+            $("#jumpq").val("");
+          } catch(err) {
+            alert("Must be a number");
+          }
+        }
+      });
+    });
+    
+  </script>
+</html>
